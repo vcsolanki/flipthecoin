@@ -1,0 +1,119 @@
+:root {
+    --background-color: #404A65;
+    --text-color: #ecedf0;
+    --title-shadow-color: #35383f;
+    --link-color: #1F6FB0;
+
+    --coin-rotation: 0deg;
+    --coin-spin-duration: 2s;
+    --coin-spin-ease: linear;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Kanit", sans-serif;
+    color: var(--text-color);
+}
+
+body {
+    height: 100vh;
+    background-color: var(--background-color);
+}
+
+.author-info {
+    font-size: 14px;
+    text-align: center;
+    color: var(--text-color);
+    font-size: 1.25rem;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.author-info a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+.heading {
+    text-shadow: 2px 2px 0px var(--title-shadow-color);
+    -webkit-text-stroke-width: 5px;
+    -webkit-text-stroke-color: var(--title-shadow-color);
+    font-size: 4rem;
+    font-weight: 900;
+    text-align: center;
+}
+
+.sub-heading {
+    font-weight: 600;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.button {
+    background-color: var(--link-color);
+    box-shadow: 0px 4px 0px 0px #23649b;
+    font-weight: 600;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    border: none;
+    padding: 10px 40px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.button:active {
+    position: relative;
+    top: 4px;
+    box-shadow: none;
+}
+
+.button:disabled {
+    position: relative;
+    background-color: #35383f;
+    color: #555555;
+    box-shadow: none;
+    top: 4px;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+    gap: 4rem;
+    min-height: 100%;
+}
+
+.flex-grow {
+    flex-grow: 1;
+}
+
+
+.coin {
+    position: relative;
+    backface-visibility: hidden;
+    transition: all var(--coin-spin-duration) ease-in;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.coin:hover {
+    box-shadow: 0px 0px 20px rgb(255, 174, 13);
+}
+
+.heads {
+    left: 25%;
+    transform: rotate3d(0, 1, 0, var(--coin-rotation));
+}
+
+.tails {
+    left: -25%;
+    transform: rotate3d(0, 1, 0, calc(180deg + var(--coin-rotation)));
+}
+
+.shadow {
+    transform: rotate3d(0, 1, 0, var(--coin-rotation));
+    transition: all var(--coin-spin-duration) ease-in;
+}
