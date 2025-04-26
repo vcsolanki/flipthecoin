@@ -1,13 +1,14 @@
 let coinSpin = 0;
 let coinSpinDuration = 4;
-let lastCoinSpin = 0;
 let coinSide = false;
-let heads = undefined;
-let randomButton = undefined;
-let resultText = undefined;
-let coinContainer = undefined;
-let sameResultCount = 1;
-let nextPhrase = 0;
+let heads;
+let tails;
+let shadow;
+let randomButton;
+let resultText;
+let coinContainer;
+let sameResultCount = 0;
+let root;
 
 const phrases = [
 	"Let’s leave it up to the gods of chance!",
@@ -42,20 +43,27 @@ const phrases = [
 	"Let's ask Mr. Shiny where our lives are headed.",
 ];
 
-function startCoinSpin() {
-	resultText.innerHTML = "...";
-	randomButton.disabled = true;
+function setCoinRotation(value) {
+	root.setProperty("--coin-rotation", `${value}deg`);
+}
+
+function setCoinSpinDuration(value) {
+	root.setProperty("--coin-spin-duration", `${value}s`);
+}
+
+function setNextRandomCoinSpinDuration() {
+	coinSpinDuration = 2 + Math.round(4 * Math.random());
+	setCoinSpinDuration(coinSpinDuration);
+}
+
+function setNextFunnyPhrase() {
+	const nextPhrase =  Math.round(2 * phrases.length * Math.random()) % phrases.length;
+	setResultText(phrases[nextPhrase]);
+}
+
+function setNextCoinSide() {
+
 	const newSide = Math.random() > 0.5;
-
-	nextPhrase =
-		(nextPhrase + Math.round(phrases.length * Math.random())) % phrases.length;
-	resultText.innerHTML = phrases[nextPhrase];
-
-	coinSpinDuration = 2 + Math.round(5 * Math.random());
-	document.body.style.setProperty(
-		"--coin-spin-duration",
-		`${coinSpinDuration}s`,
-	);
 
 	if (coinSide === newSide) {
 		sameResultCount++;
@@ -65,29 +73,66 @@ function startCoinSpin() {
 
 	coinSide = newSide;
 
-	do {
-		coinSpin = 360 * Math.round(20 * Math.random());
-	} while (coinSpin === lastCoinSpin);
+}
 
-	lastCoinSpin = coinSpin;
+function setNextRandomCoinRotation() {
 
-	console.log(coinSpin, coinSide);
+	setNextRandomCoinSpinDuration();
+	setNextCoinSide();
 
+	coinSpin = 360 * Math.round(10 + 10 * Math.random());
 	coinSpin += coinSide ? 180 : 0;
-	document.body.style.setProperty("--coin-rotation", `${coinSpin}deg`);
+
+	setCoinRotation(coinSpin);
+
+}
+
+function setSpinningState() {
+	randomButton.disabled = true;
+	setResultText("...");
+	setNextFunnyPhrase();
+}
+
+function setResultState() {
+	randomButton.disabled = false;
+	showCoinResult();
+	resetCoinRotation();
+}
+
+function startCoinSpin() {
+
+	setSpinningState();
+	setNextRandomCoinRotation();
+
+}
+
+function setResultText(value) {
+	resultText.innerHTML = value;
+}
+
+function resetCoinRotation() {
+	setCoinSpinDuration(0);
+	const resetRotationState = coinSpin % 360 + coinSide ? 180 : 0;
+	setCoinRotation(resetRotationState);
+}
+
+function showCoinResult() {
+	let resultString = coinSide ? "Tails" : "Heads";
+	if (sameResultCount > 1) resultString += ` x ${sameResultCount}`;
+	setResultText(resultString);
 }
 
 function coinSpinEnded() {
-	randomButton.disabled = false;
-	let resultString = coinSide ? "Tails" : "Heads";
-
-	if (sameResultCount > 1) resultString += ` x ${sameResultCount}`;
-
-	resultText.innerHTML = resultString;
+	setResultState();
 }
 
 window.addEventListener("load", () => {
+
+	root = document.documentElement.style;
+
 	heads = document.getElementById("heads");
+	tails = document.getElementById("tails");
+	shadow = document.getElementById("shadow");
 	randomButton = document.getElementById("randomButton");
 	resultText = document.getElementById("resultText");
 	coinContainer = document.getElementById("coinContainer");
@@ -95,4 +140,5 @@ window.addEventListener("load", () => {
 	randomButton.addEventListener("click", startCoinSpin);
 	heads.addEventListener("transitionend", coinSpinEnded);
 	coinContainer.addEventListener("click", startCoinSpin);
+
 });
